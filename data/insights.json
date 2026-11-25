@@ -1,0 +1,80 @@
+{
+  "campus": "GLA University, Mathura (17km Stone, NH-19, Chaumuhan)",
+  "total_reports": 153,
+  "lost_count": 76,
+  "found_count": 77,
+  "reunited_count": 32,
+  "reunion_rate_pct": 21,
+  "top_3_most_lost_items": [
+    {
+      "rank": 1,
+      "name": "GLA Bus Transport Pass",
+      "count": 8,
+      "percentage": 11
+    },
+    {
+      "rank": 2,
+      "name": "Insulated Stainless Steel Flask",
+      "count": 6,
+      "percentage": 8
+    },
+    {
+      "rank": 3,
+      "name": "GLA Student RFID ID Card",
+      "count": 6,
+      "percentage": 8
+    }
+  ],
+  "top_3_most_lost_categories": [
+    {
+      "rank": 1,
+      "name": "Cards & IDs",
+      "count": 22,
+      "percentage": 29
+    },
+    {
+      "rank": 2,
+      "name": "Bottles & Tumblers",
+      "count": 15,
+      "percentage": 20
+    },
+    {
+      "rank": 3,
+      "name": "Chargers & Cables",
+      "count": 12,
+      "percentage": 16
+    }
+  ],
+  "top_3_hotspots": [
+    {
+      "rank": 1,
+      "name": "GLA Central Library",
+      "count": 53,
+      "percentage": 35
+    },
+    {
+      "rank": 2,
+      "name": "GD Subway & Central Food Court",
+      "count": 38,
+      "percentage": 25
+    },
+    {
+      "rank": 3,
+      "name": "Academic Blocks 1-3 (CSE Complex)",
+      "count": 30,
+      "percentage": 20
+    }
+  ],
+  "all_hotspot_counts": {
+    "Academic Blocks 4-6 (IBM Management)": 15,
+    "GLA Central Library": 53,
+    "KC Sports Ground & Ninad Amphitheatre": 5,
+    "GD Subway & Central Food Court": 38,
+    "Academic Blocks 1-3 (CSE Complex)": 30,
+    "Hostels & Residential Zone": 10,
+    "Main Gate 1 & NH-19 Checkpoint": 2
+  },
+  "avg_recovery_time_mins": 38,
+  "peak_loss_window": "2:00 PM – 4:30 PM (Post-Lunch Lab & Library Rush)",
+  "key_data_insight": "60% of all items at GLA University Mathura are lost in just 2 hotspots: GLA Central Library (35%) and GD Subway Food Court (25%) between 1:00 PM and 4:30 PM. GLA Student ID Cards represent the #1 most frequently lost critical item."
+}

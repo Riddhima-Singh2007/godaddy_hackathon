@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLUE · GLA University Mathura | Lost & Found</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            campus: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#0a0e17',
+            },
+            indigoBrand: {
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#090d16] text-slate-100 min-h-screen font-sans antialiased selection:bg-indigo-600 selection:text-white">
+
+  <!-- Main Navbar (Top Dev Bar DELETED as requested) -->
+  <header class="sticky top-0 z-40 bg-[#0d1322]/95 backdrop-blur-md border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('report')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-600/25 ring-1 ring-white/15">
+          <i data-lucide="compass" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xl font-extrabold tracking-tight text-white">BLUE</span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">GLA Campus</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium -mt-0.5">Lost & Found · GLA University, Mathura</p>
+        </div>
+      </div>
+
+      <!-- Center Nav Tabs (Dev Log tab removed from main bar) -->
+      <nav class="hidden md:flex items-center space-x-1 bg-[#131b2e] p-1 rounded-xl border border-slate-800 text-sm">
+        <button onclick="switchTab('report')" id="tab-btn-report" class="tab-btn active px-4 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 text-white bg-indigo-600 shadow-sm">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Report Item</span>
+        </button>
+        <button onclick="switchTab('map')" id="tab-btn-map" class="tab-btn px-4 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="map" class="w-4 h-4"></i>
+          <span>Campus Map & Hotspots</span>
+        </button>
+        <button onclick="switchTab('feed')" id="tab-btn-feed" class="tab-btn px-4 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Recent Items (<span id="tab-feed-count">150</span>)</span>
+        </button>
+        <button onclick="switchTab('pitch')" id="tab-btn-pitch" class="tab-btn px-4 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 text-amber-300 hover:text-amber-200 hover:bg-amber-500/10 border border-amber-500/20">
+          <i data-lucide="presentation" class="w-4 h-4"></i>
+          <span>3-Min Pitch Guide</span>
+        </button>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center space-x-3">
+        <!-- Live Reunited Counter -->
+        <div class="hidden lg:flex items-center space-x-2 bg-[#131b2e] border border-slate-800 px-3.5 py-1.5 rounded-xl text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-slate-400">Reunited Today:</span>
+          <span id="stat-reunited-badge" class="font-bold text-emerald-400">30</span>
+        </div>
+
+        <!-- Audio Chime Toggle -->
+        <button id="btn-sound-toggle" class="text-slate-400 hover:text-white p-2 rounded-xl bg-[#131b2e] border border-slate-800 transition" title="Toggle audio chime">
+          <i data-lucide="volume-2" class="w-4 h-4" id="sound-icon"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Mobile Tab Bar -->
+  <div class="md:hidden flex overflow-x-auto bg-[#0d1322] border-b border-slate-800 p-2 space-x-1.5 text-xs">
+    <button onclick="switchTab('report')" class="mobile-tab-btn active px-3.5 py-1.5 rounded-lg text-white bg-indigo-600 whitespace-nowrap font-medium">Report</button>
+    <button onclick="switchTab('map')" class="mobile-tab-btn px-3.5 py-1.5 rounded-lg text-slate-300 bg-[#131b2e] whitespace-nowrap">GLA Map</button>
+    <button onclick="switchTab('feed')" class="mobile-tab-btn px-3.5 py-1.5 rounded-lg text-slate-300 bg-[#131b2e] whitespace-nowrap">Feed</button>
+    <button onclick="switchTab('pitch')" class="mobile-tab-btn px-3.5 py-1.5 rounded-lg text-amber-300 bg-amber-500/10 border border-amber-500/20 whitespace-nowrap">3-Min Pitch</button>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: REPORT & LIVE MATCH FINDER -->
+    <!-- ========================================== -->
+    <section id="tab-content-report" class="tab-pane space-y-6">
+      
+      <!-- Welcome & Quick Fill Cards -->
+      <div class="bg-gradient-to-r from-[#12192c] via-[#101726] to-[#0d1322] border border-slate-800/90 rounded-2xl p-5 shadow-lg shadow-black/20">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
+              <span>Lost something on campus? Let's find it before lunch 🥪</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Fill out 3 quick details, or click a sample preset to test instant matching right away.</p>
+          </div>
+          
+          <!-- Sample Chips -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="applyGLAPreset('judge_hoodie')" class="preset-chip text-xs bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 font-medium shadow-sm">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>⚡ Judge Test: Grey Hoodie (Library Desk 42)</span>
+            </button>
+            <button onclick="applyGLAPreset('navy_bottle')" class="preset-chip text-xs bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 font-medium">
+              <span>💧 Navy Bottle (GD Subway)</span>
+            </button>
+            <button onclick="applyGLAPreset('gla_id')" class="preset-chip text-xs bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 font-medium">
+              <span>🪪 Student ID Card</span>
+            </button>
+            <button onclick="applyGLAPreset('charger_ab2')" class="preset-chip text-xs bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 font-medium">
+              <span>🔌 MacBook Charger (AB-2)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column Grid: Form on Left, Live Matches on Right -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left: Clean Human Intake Form -->
+        <div class="lg:col-span-6 bg-[#0f1626] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+          
+          <!-- Toggle Option: Lost vs Found -->
+          <div class="flex items-center justify-between pb-3.5 border-b border-slate-800/70">
+            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">I am reporting:</span>
+            <div class="bg-[#090e18] p-1 rounded-xl border border-slate-800 flex items-center">
+              <button type="button" id="toggle-lost" onclick="setReportType('lost')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-white bg-indigo-600 shadow-sm flex items-center space-x-1.5">
+                <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                <span>I Lost Something</span>
+              </button>
+              <button type="button" id="toggle-found" onclick="setReportType('found')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white flex items-center space-x-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                <span>I Found Something</span>
+              </button>
+            </div>
+          </div>
+
+          <form id="quick-report-form" onsubmit="handleReportSubmit(event)" class="space-y-4">
+
+            <!-- Item Name -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">
+                What item is it? *
+              </label>
+              <input 
+                type="text" 
+                id="form-item" 
+                required 
+                placeholder="e.g. Grey Pullover Hoodie, Milton Flask, Student ID Card, AirPods" 
+                class="w-full bg-[#080d18] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                oninput="triggerLivePreview()"
+              />
+            </div>
+
+            <!-- Color & Easy Color Swatches -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Color *</span>
+                <span class="text-[11px] text-slate-400 font-normal">Navy matches Blue, Heather matches Grey</span>
+              </label>
+              <input 
+                type="text" 
+                id="form-colour" 
+                required 
+                placeholder="e.g. Heather Grey or Navy Blue" 
+                class="w-full bg-[#080d18] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                oninput="triggerLivePreview()"
+              />
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                <button type="button" onclick="setColor('Navy Blue')" class="px-2.5 py-1 rounded-lg text-xs bg-blue-950/80 text-blue-300 border border-blue-800 hover:border-blue-500 transition">Navy Blue</button>
+                <button type="button" onclick="setColor('Heather Grey')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-800 text-slate-200 border border-slate-700 hover:border-slate-500 transition">Heather Grey</button>
+                <button type="button" onclick="setColor('Matte Black')" class="px-2.5 py-1 rounded-lg text-xs bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-zinc-500 transition">Matte Black</button>
+                <button type="button" onclick="setColor('White')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-100 text-slate-900 font-semibold border border-slate-300">White</button>
+                <button type="button" onclick="setColor('Maroon Red')" class="px-2.5 py-1 rounded-lg text-xs bg-red-950/80 text-red-300 border border-red-800">Maroon Red</button>
+                <button type="button" onclick="setColor('Olive Green')" class="px-2.5 py-1 rounded-lg text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-800">Olive Green</button>
+              </div>
+            </div>
+
+            <!-- GLA University Landmark & Specific Area -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Campus Landmark *</label>
+                <select 
+                  id="form-hotspot" 
+                  onchange="updateGLASublocations(); triggerLivePreview();" 
+                  class="w-full bg-[#080d18] border border-slate-700/80 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                >
+                  <option value="GLA Central Library">GLA Central Library</option>
+                  <option value="GD Subway & Central Food Court">GD Subway & Food Court</option>
+                  <option value="Academic Blocks 1-3 (CSE Complex)">AB 1-3 (CSE Complex)</option>
+                  <option value="Academic Blocks 4-6 (IBM Management)">AB 4-6 (IBM Block)</option>
+                  <option value="Hostels & Residential Zone">Hostel Wings (Wing 1-5, Sarojini)</option>
+                  <option value="KC Sports Ground & Ninad Amphitheatre">KC Sports Ground & Ninad</option>
+                  <option value="Main Gate 1 & NH-19 Checkpoint">Main Gate 1 & Security Desk</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Specific Room / Desk</label>
+                <input 
+                  type="text" 
+                  id="form-place" 
+                  placeholder="e.g. 2nd Floor Quiet Reading Hall (Desk #42)" 
+                  value="2nd Floor Quiet Reading Hall (Desk #42)"
+                  class="w-full bg-[#080d18] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  oninput="triggerLivePreview()"
+                />
+              </div>
+            </div>
+
+            <!-- Time & Brand -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Approximate Time</label>
+                <input 
+                  type="text" 
+                  id="form-time" 
+                  value="Yesterday 4:00 PM"
+                  placeholder="e.g. Yesterday 4:00 PM or Today 11:30 AM" 
+                  class="w-full bg-[#080d18] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  oninput="triggerLivePreview()"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Brand / Identifier</label>
+                <input 
+                  type="text" 
+                  id="form-brand" 
+                  placeholder="e.g. Champion, Milton, Apple, Hydro Flask" 
+                  class="w-full bg-[#080d18] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  oninput="triggerLivePreview()"
+                />
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Identifying Details</label>
+              <textarea 
+                id="form-desc" 
+                rows="2" 
+                placeholder="Mention scratches, stickers, front pocket, or desk number..." 
+                class="w-full bg-[#080d18] border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                oninput="triggerLivePreview()"
+              ></textarea>
+            </div>
+
+            <!-- Photo Upload (Optional) -->
+            <div class="p-3 bg-[#080d18] rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i>
+                <div>
+                  <span class="font-medium text-slate-200">Have a photo?</span>
+                  <span class="text-[11px] text-slate-400 ml-1">Upload for color verification</span>
+                </div>
+              </div>
+              <label class="cursor-pointer bg-[#131b2e] hover:bg-slate-800 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium transition border border-slate-700">
+                <span>Browse</span>
+                <input type="file" id="photo-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)" />
+              </label>
+            </div>
+            <div id="photo-preview-container" class="hidden items-center space-x-3 bg-[#080d18] p-2.5 rounded-xl border border-slate-800">
+              <img id="photo-preview" src="" alt="Preview" class="w-12 h-12 rounded-lg object-cover border border-slate-700" />
+              <div class="text-xs">
+                <p id="photo-detected-tag" class="font-semibold text-emerald-400">Photo Attached</p>
+                <p class="text-[11px] text-slate-400">Color auto-verified</p>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-2">
+              <button 
+                type="submit" 
+                id="btn-submit-report"
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/25 transition active:scale-[0.98] flex items-center justify-center space-x-2 text-sm"
+              >
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span id="submit-btn-text">Submit & Search Matches</span>
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+
+        <!-- Right: Live Matches -->
+        <div class="lg:col-span-6 space-y-4">
+
+          <div class="bg-[#0f1626] border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></span>
+              <h3 class="text-sm font-bold text-white">Live Matches on Campus</h3>
+            </div>
+            <span id="radar-status-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium">
+              Ready to match...
+            </span>
+          </div>
+
+          <!-- Match Cards Container -->
+          <div id="live-matches-container" class="space-y-3 min-h-[460px]">
+            <!-- Rendered dynamically -->
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: CAMPUS MAP & HOTSPOTS -->
+    <!-- ========================================== -->
+    <section id="tab-content-map" class="tab-pane hidden space-y-6">
+
+      <!-- 3 Key Metric Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <div class="bg-[#0f1626] border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Most-Lost at GLA</span>
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div id="metric-top-lost-items" class="space-y-2">
+            <!-- Dynamic -->
+          </div>
+        </div>
+
+        <div class="bg-[#0f1626] border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Top Loss Hotspots</span>
+            <i data-lucide="map-pin" class="w-4 h-4 text-indigo-400"></i>
+          </div>
+          <div id="metric-top-hotspots" class="space-y-2">
+            <!-- Dynamic -->
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0f1626] to-[#121c33] border border-indigo-900/40 rounded-2xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-indigo-300 uppercase tracking-wider">The 60% Rule (Data Insight)</span>
+            <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <p id="metric-key-insight" class="text-xs text-slate-200 leading-relaxed font-medium">
+            Loading data insight...
+          </p>
+          <div class="pt-2 border-t border-slate-800 flex justify-between text-xs text-slate-400">
+            <span>Peak Window: <strong class="text-white">2:00 – 4:30 PM</strong></span>
+            <span>Avg Return: <strong class="text-emerald-400 font-bold">&lt; 38 Mins</strong></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Campus Map Section -->
+      <div class="bg-[#0f1626] border border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center space-x-2">
+              <i data-lucide="map" class="w-5 h-5 text-indigo-400"></i>
+              <span>Interactive Campus Layout (110-Acre NH-19 Campus)</span>
+            </h3>
+            <p class="text-xs text-slate-400">Click any building to filter all items reported there.</p>
+          </div>
+          <div class="flex items-center space-x-3 text-xs">
+            <span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span><span>High Activity (&gt;30)</span></span>
+            <span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span><span>Moderate (15-30)</span></span>
+          </div>
+        </div>
+
+        <!-- Campus Map SVG -->
+        <div class="relative w-full h-[450px] bg-[#070b14] rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center p-4">
+          <svg viewBox="0 0 920 500" class="w-full h-full select-none" id="campus-svg-map">
+            <defs>
+              <pattern id="campus-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+                <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+              </pattern>
+              <radialGradient id="heat-lib" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ef4444" stop-opacity="0.45"/>
+                <stop offset="60%" stop-color="#ef4444" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="heat-subway" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.45"/>
+                <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="heat-cse" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#6366f1" stop-opacity="0.45"/>
+                <stop offset="60%" stop-color="#6366f1" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <rect width="920" height="500" fill="#070b14" />
+            <rect width="920" height="500" fill="url(#campus-grid)" />
+
+            <!-- NH-19 Highway at Bottom -->
+            <rect x="0" y="460" width="920" height="40" fill="#1e293b" />
+            <line x1="0" y1="480" x2="920" y2="480" stroke="#facc15" stroke-width="3" stroke-dasharray="16 12" />
+            <text x="460" y="475" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle">NH-19 MATHURA - DELHI HIGHWAY</text>
+
+            <!-- Main Entrance Gate 1 -->
+            <g class="cursor-pointer group" onclick="selectHotspotFilter('Main Gate 1 & NH-19 Checkpoint')">
+              <rect x="380" y="415" width="160" height="40" rx="8" fill="#131b2e" stroke="#64748b" stroke-width="1.5" class="group-hover:fill-slate-800 transition" />
+              <text x="460" y="435" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">Main Gate 1 & Security Desk</text>
+              <text x="460" y="448" fill="#94a3b8" font-size="9" text-anchor="middle">Guard Lost & Found Point</text>
+            </g>
+
+            <!-- Internal Avenues -->
+            <path d="M 460 415 L 460 230 M 230 230 L 700 230 M 230 110 L 230 360 M 700 110 L 700 360" stroke="#172033" stroke-width="14" stroke-linecap="round" fill="none"/>
+
+            <!-- Heat Glows -->
+            <circle cx="230" cy="140" r="130" fill="url(#heat-lib)" />
+            <circle cx="460" cy="230" r="115" fill="url(#heat-subway)" />
+            <circle cx="700" cy="140" r="110" fill="url(#heat-cse)" />
+
+            <!-- Building 1: GLA Central Library -->
+            <g class="cursor-pointer group" onclick="selectHotspotFilter('GLA Central Library')">
+              <rect x="135" y="75" width="190" height="130" rx="12" fill="#131b2e" stroke="#ef4444" stroke-width="2.5" class="transition group-hover:fill-slate-800" />
+              <text x="230" y="118" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">GLA Central Library</text>
+              <text x="230" y="138" fill="#94a3b8" font-size="10" text-anchor="middle">#1 Hotspot (52 items · 35%)</text>
+              <rect x="175" y="152" width="110" height="22" rx="11" fill="#ef4444" />
+              <text x="230" y="167" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">52 REPORTS</text>
+            </g>
+
+            <!-- Building 2: GD Subway & Central Food Court -->
+            <g class="cursor-pointer group" onclick="selectHotspotFilter('GD Subway & Central Food Court')">
+              <rect x="365" y="170" width="190" height="120" rx="12" fill="#131b2e" stroke="#f59e0b" stroke-width="2.5" class="transition group-hover:fill-slate-800" />
+              <text x="460" y="210" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">GD Subway & Food Court</text>
+              <text x="460" y="228" fill="#94a3b8" font-size="10" text-anchor="middle">#2 Hotspot (38 items · 25%)</text>
+              <rect x="405" y="242" width="110" height="22" rx="11" fill="#f59e0b" />
+              <text x="460" y="257" fill="#1e293b" font-size="10" font-weight="bold" text-anchor="middle">38 REPORTS</text>
+            </g>
+
+            <!-- Building 3: Academic Blocks 1-3 (CSE Complex) -->
+            <g class="cursor-pointer group" onclick="selectHotspotFilter('Academic Blocks 1-3 (CSE Complex)')">
+              <rect x="605" y="75" width="190" height="130" rx="12" fill="#131b2e" stroke="#6366f1" stroke-width="2.5" class="transition group-hover:fill-slate-800" />
+              <text x="700" y="118" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">AB 1-3 (CSE Complex)</text>
+              <text x="700" y="138" fill="#94a3b8" font-size="10" text-anchor="middle">#3 Hotspot (30 items · 20%)</text>
+              <rect x="645" y="152" width="110" height="22" rx="11" fill="#6366f1" />
+              <text x="700" y="167" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">30 REPORTS</text>
+            </g>
+
+            <!-- Building 4: Hostels -->
+            <g class="cursor-pointer group" onclick="selectHotspotFilter('Hostels & Residential Zone')">
+              <rect x="135" y="275" width="170" height="85" rx="10" fill="#131b2e" stroke="#64748b" stroke-width="1.5" class="transition group-hover:fill-slate-800" />
+              <text x="220" y="310" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">Hostel Wings</text>
+              <text x="220" y="328" fill="#94a3b8" font-size="9" text-anchor="middle">Boys Wing 1-5 / Sarojini</text>
+            </g>
+
+            <!-- Building 5: IBM Block -->
+            <g class="cursor-pointer group" onclick="selectHotspotFilter('Academic Blocks 4-6 (IBM Management)')">
+              <rect x="625" y="275" width="170" height="85" rx="10" fill="#131b2e" stroke="#64748b" stroke-width="1.5" class="transition group-hover:fill-slate-800" />
+              <text x="710" y="310" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">AB 4-6 (IBM Block)</text>
+              <text x="710" y="328" fill="#94a3b8" font-size="9" text-anchor="middle">Management Seminar Halls</text>
+            </g>
+
+            <!-- Building 6: KC Sports Ground -->
+            <g class="cursor-pointer group" onclick="selectHotspotFilter('KC Sports Ground & Ninad Amphitheatre')">
+              <rect x="375" y="45" width="170" height="85" rx="10" fill="#131b2e" stroke="#64748b" stroke-width="1.5" class="transition group-hover:fill-slate-800" />
+              <text x="460" y="80" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">KC Sports Ground</text>
+              <text x="460" y="98" fill="#94a3b8" font-size="9" text-anchor="middle">& Ninad Amphitheatre</text>
+            </g>
+
+          </svg>
+        </div>
+
+        <div id="selected-hotspot-banner" class="hidden bg-indigo-950/40 border border-indigo-800/60 rounded-xl p-3 flex items-center justify-between text-xs">
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-white" id="selected-hotspot-name">Selected Landmark</span>
+            <span class="text-indigo-300">Click below to view all items reported at this building.</span>
+          </div>
+          <button onclick="switchTab('feed')" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md font-semibold">View Items &rarr;</button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: CAMPUS FEED -->
+    <!-- ========================================== -->
+    <section id="tab-content-feed" class="tab-pane hidden space-y-4">
+      
+      <!-- Filters bar -->
+      <div class="bg-[#0f1626] border border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+        <div class="relative w-full md:w-80">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-500"></i>
+          <input 
+            type="text" 
+            id="feed-search" 
+            placeholder="Search items, colors, buildings..." 
+            class="w-full bg-[#080d18] border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            oninput="renderFeed()"
+          />
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+          <button onclick="setFeedFilter('all')" id="filter-btn-all" class="filter-pill active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white">All (150)</button>
+          <button onclick="setFeedFilter('lost')" id="filter-btn-lost" class="filter-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#131b2e] text-slate-300 hover:text-white">Active Lost</button>
+          <button onclick="setFeedFilter('found')" id="filter-btn-found" class="filter-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#131b2e] text-slate-300 hover:text-white">Active Found</button>
+          <button onclick="setFeedFilter('reunited')" id="filter-btn-reunited" class="filter-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#131b2e] text-emerald-400 hover:text-emerald-300">🎉 Reunited</button>
+        </div>
+
+        <div class="w-full md:w-auto">
+          <select id="feed-hotspot-select" onchange="renderFeed()" class="w-full md:w-auto bg-[#080d18] border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300">
+            <option value="">All GLA Landmarks</option>
+            <option value="GLA Central Library">GLA Central Library</option>
+            <option value="GD Subway & Central Food Court">GD Subway & Food Court</option>
+            <option value="Academic Blocks 1-3 (CSE Complex)">AB 1-3 (CSE Complex)</option>
+            <option value="Academic Blocks 4-6 (IBM Management)">AB 4-6 (IBM Block)</option>
+            <option value="Hostels & Residential Zone">Hostel Wings</option>
+            <option value="KC Sports Ground & Ninad Amphitheatre">KC Sports Ground</option>
+            <option value="Main Gate 1 & NH-19 Checkpoint">Main Gate 1</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="feed-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: 3-MINUTE PITCH GUIDE -->
+    <!-- ========================================== -->
+    <section id="tab-content-pitch" class="tab-pane hidden space-y-6">
+      
+      <!-- Pitch Header Bar -->
+      <div class="bg-gradient-to-r from-amber-950/40 via-[#0f1626] to-[#0f1626] border border-amber-500/30 rounded-2xl p-4 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-[11px] uppercase tracking-wider text-amber-400 font-bold block">Presentation Assistant</span>
+          <h2 class="text-base font-bold text-white">3-Minute Hackathon Pitch Script</h2>
+        </div>
+        
+        <div class="flex items-center space-x-3 bg-[#080d18] px-4 py-2 rounded-xl border border-slate-800">
+          <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+          <span id="pitch-timer" class="font-mono text-base font-bold text-white">00:00</span>
+          <span class="text-xs text-slate-500">/ 03:00</span>
+          <button onclick="togglePitchTimer()" id="btn-pitch-timer" class="px-2.5 py-1 rounded bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs">Start</button>
+          <button onclick="resetPitchTimer()" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">Reset</button>
+        </div>
+      </div>
+
+      <!-- Slide Cards Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+        <!-- Slide 1 -->
+        <div class="bg-[#0f1626] border border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+          <div class="space-y-2.5">
+            <span class="text-[11px] font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">0:00 - 0:45 · The Hook</span>
+            <h4 class="text-sm font-bold text-white">The 110-Acre Problem & The 60% Hotspot Law</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              GLA University has thousands of students moving between Central Library, GD Subway, and AB-1. WhatsApp groups are spammed with "anyone seen my card?".
+            </p>
+            <div class="bg-[#080d18] p-3 rounded-xl border border-slate-800 text-xs space-y-1">
+              <p class="font-bold text-amber-300">🔥 Key Data Insight:</p>
+              <p class="text-slate-300">• 60% of lost items happen in just 2 spots: <strong>GLA Central Library (35%)</strong> & <strong>GD Subway (25%)</strong>.</p>
+              <p class="text-slate-300">• Top item: Student ID Cards (30% of losses).</p>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 italic pt-2 border-t border-slate-800">
+            "BLUE cuts recovery time from 4 days to under 38 minutes—before lunch!"
+          </p>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="bg-[#0f1626] border border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+          <div class="space-y-2.5">
+            <span class="text-[11px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">0:45 - 2:00 · Live Demo</span>
+            <h4 class="text-sm font-bold text-white">Live End-to-End Demo (90-Min Gate)</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Enter judge query: <em>"lost: grey hoodie, library, yesterday 4 pm"</em>.
+            </p>
+            <div class="bg-[#080d18] p-3 rounded-xl border border-slate-800 text-xs space-y-1.5">
+              <p class="text-emerald-400">✓ Instant 96% match found on Library Desk #42</p>
+              <p class="text-slate-300">✓ Level 2: "navy bottle, subway" finds navy Hydro Flask at GD Subway</p>
+              <p class="text-slate-300">✓ Click "Reunited" $\rightarrow$ Confetti & Claim Receipt</p>
+            </div>
+            <button onclick="runPitchJudgeDemo()" class="w-full py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl text-xs transition">
+              Run Demo Live &rarr;
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-400 italic pt-2 border-t border-slate-800">
+            "Under-15s reporting + intelligent matching."
+          </p>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="bg-[#0f1626] border border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+          <div class="space-y-2.5">
+            <span class="text-[11px] font-mono font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">2:00 - 3:00 · Dev Story</span>
+            <h4 class="text-sm font-bold text-white">What AI Got Wrong & Engineering Fix</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              LLMs fail on strict domain logic when asked naively:
+            </p>
+            <div class="bg-[#080d18] p-3 rounded-xl border border-slate-800 text-xs space-y-1.5">
+              <p class="text-red-300">✗ AI used string includes() $\rightarrow$ 0% on "navy" vs "blue"</p>
+              <p class="text-red-300">✗ AI generated generic western campus names</p>
+              <p class="text-emerald-300">✓ Fix: Built color family tree and real GLA Mathura landmark mapping</p>
+            </div>
+          </div>
+          <p class="text-[11px] text-emerald-400 font-bold pt-2 border-t border-slate-800">
+            "BLUE makes lost-and-found at GLA University simple and reliable."
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MATCH INSPECTOR MODAL -->
+  <!-- ========================================== -->
+  <div id="modal-match-detail" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-[#0f1626] border border-slate-700/80 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-5">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+            <i data-lucide="check-check" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Item Match Comparison</h3>
+            <p class="text-xs text-slate-400">Why this is your item</p>
+          </div>
+        </div>
+        <button onclick="closeMatchModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Match Score -->
+      <div class="bg-gradient-to-r from-indigo-950/60 to-[#080d18] border border-indigo-800/40 rounded-xl p-4 flex items-center justify-between">
+        <div>
+          <span class="text-xs uppercase font-bold text-indigo-300 tracking-wider">Match Confidence</span>
+          <div class="flex items-baseline space-x-2">
+            <span id="modal-match-score" class="text-3xl font-black text-white">96%</span>
+            <span id="modal-match-tier" class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">Exceptional Match</span>
+          </div>
+        </div>
+        <div class="text-right text-xs text-slate-400">
+          <p>Location: <strong class="text-white">GLA Central Library</strong></p>
+          <p>Status: <strong class="text-emerald-400">Available to Claim</strong></p>
+        </div>
+      </div>
+
+      <!-- Side-by-Side Comparison -->
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="bg-[#080d18] p-3.5 rounded-xl border border-slate-800 space-y-1">
+          <span class="text-[10px] uppercase tracking-wider text-indigo-400 font-bold block">What You Lost</span>
+          <p class="font-bold text-white" id="modal-query-item">Grey Hoodie</p>
+          <p class="text-slate-400" id="modal-query-colour">Colour: Heather Grey</p>
+          <p class="text-slate-400" id="modal-query-place">Place: GLA Library</p>
+          <p class="text-slate-400" id="modal-query-time">Time: Yesterday 4:00 PM</p>
+        </div>
+        <div class="bg-[#080d18] p-3.5 rounded-xl border border-slate-800 space-y-1">
+          <span class="text-[10px] uppercase tracking-wider text-emerald-400 font-bold block">What Was Found</span>
+          <p class="font-bold text-white" id="modal-candidate-item">Pullover Fleece Hoodie</p>
+          <p class="text-slate-400" id="modal-candidate-colour">Colour: Heather Grey</p>
+          <p class="text-slate-400" id="modal-candidate-place">Place: GLA Central Library Floor 2</p>
+          <p class="text-slate-400" id="modal-candidate-time">Time: Yesterday 4:15 PM</p>
+        </div>
+      </div>
+
+      <!-- Match Factors -->
+      <div class="space-y-2">
+        <span class="text-xs font-semibold text-slate-300">Match Reasons:</span>
+        <div id="modal-breakdown-list" class="space-y-1.5 text-xs">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
+        <button onclick="closeMatchModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+          Close
+        </button>
+        <button id="btn-modal-reunite" onclick="confirmReunionFromModal()" class="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition flex items-center justify-center space-x-1.5 active:scale-95">
+          <i data-lucide="party-popper" class="w-4 h-4"></i>
+          <span>This is Mine! Mark Reunited 🎉</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- REUNION CELEBRATION MODAL -->
+  <!-- ========================================== -->
+  <div id="modal-reunion-success" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="bg-[#0f1626] border border-emerald-500/40 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl relative">
+      
+      <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/10">
+        <i data-lucide="award" class="w-8 h-8"></i>
+      </div>
+
+      <div>
+        <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold">Mission Accomplished</span>
+        <h3 class="text-xl font-black text-white mt-1">Item Reunited Before Lunch! 🎉</h3>
+        <p class="text-xs text-slate-300 mt-1">Status updated to Reunited across GLA University.</p>
+      </div>
+
+      <div class="bg-[#080d18] p-4 rounded-2xl border border-slate-800 text-left space-y-2 text-xs font-mono">
+        <div class="flex justify-between text-slate-400">
+          <span>Claim Verification:</span>
+          <span class="text-emerald-400 font-bold" id="receipt-claim-code">GLA-4819-REUN</span>
+        </div>
+        <div class="flex justify-between text-slate-400">
+          <span>Item:</span>
+          <span class="text-white font-bold" id="receipt-item-name">Champion Grey Hoodie</span>
+        </div>
+        <div class="flex justify-between text-slate-400">
+          <span>Turnaround:</span>
+          <span class="text-indigo-400 font-bold">&lt; 38 Minutes</span>
+        </div>
+        <div class="flex justify-between text-slate-400">
+          <span>Campus Desk:</span>
+          <span class="text-slate-300">GLA Central Library Desk</span>
+        </div>
+      </div>
+
+      <button onclick="closeSuccessModal()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-md shadow-emerald-500/20">
+        Back to Dashboard
+      </button>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
